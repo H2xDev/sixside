@@ -1,0 +1,7 @@
+# Godot 4+ specific ignores
+.godot/
+vmf.config.json
+*.tmp
+_Art_Sources/
+Builds/
+

@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://bshecydfgs8xq"]
+
+[ext_resource type="Script" path="res://Entities/func_audio_fx.gd" id="1_7v8s8"]
+
+[node name="FuncAudioFx" type="Node3D"]
+script = ExtResource("1_7v8s8")
+
+[node name="Area3D" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]

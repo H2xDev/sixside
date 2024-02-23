@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://beey603pfp8w2"]
+
+[ext_resource type="Script" path="res://Entities/path_track.gd" id="1_nqoe8"]
+
+[node name="PathTrack" type="Node3D"]
+script = ExtResource("1_nqoe8")

@@ -1,0 +1,149 @@
+@PointClass light() iconsprite("editor/light.vmt") base(Targetname, Parentname, Light) sphere(_fifty_percent_distance) sphere(_zero_percent_distance) = light :
+	"An invisible omnidirectional lightsource."
+[
+	target(target_destination) : "Entity To Point At" : : "The name of an entity in the map that the spotlight will point at. This will override the spotlight's angles."
+	spawnflags(Flags) = [ 1 : "Initially dark" : 0 ]
+	_distance(integer) : "Maximum Distance" : 0 : "This is the distance that light is allowed to cast, in inches."
+]
+
+@SolidClass base(Targetname, Origin) = func_ladder : ""
+[
+    StartDisabled(choices) : "Start Disabled" : 0 =
+	[
+		0 : "No"
+		1 : "Yes"
+	]
+
+    input Disable(void) : ""
+    input Enable(void) : ""
+]
+
+@SolidClass = func_water : ""
+[]
+
+@SolidClass base(Parentname, Origin) = func_simplify_collision : ""
+[
+    spawnflags(Flags) =
+    [
+        1 : "Don't generate collision" : 0
+        2 : "Disable shadows" : 0
+    ]
+]
+
+@SolidClass base(Targetname, Parentname, Origin) = func_dynamic_material : ""
+[
+    spawnflags(Flags) =
+    [
+        1 : "Don't generate collision" : 0
+        2 : "Disable shadows" : 0
+    ]
+
+    spawnAlbedoColor(color255) : "Spawn albedo color" : "255 255 255" : ""
+    targetAlbedoColor(color255) : "Target albedo color" : "255 255 255" : ""
+
+    input InterpolateForward(integer)
+    input InterpolateBackward(integer)
+]
+
+@SolidClass base(Origin) = func_collision : ""
+[]
+
+@SolidClass base(Origin) = func_voxel_gi : ""
+[
+    resolution(choices): "Resolution" : 0 = 
+    [
+        0 : "64"
+        1 : "128"
+        2 : "256"
+        3 : "512"
+    ]
+
+    interior(choices): "Interior" : 0 = 
+    [
+        0 : "No"
+        1 : "Yes"
+    ]
+]
+
+@SolidClass base(Origin) = func_decal : ""
+[
+    direction(angle): "Decal direction" : "90 0 0" : ""
+    texture(material): "Texture" : "" : ""
+]
+
+@SolidClass base(Targetname, Origin) = func_audio_fx : ""
+[
+    busname(string) : "Bus" : "Master" : ""
+
+    spawnflags(Flags) = 
+    [
+        1 : "Starts Disabled" : 0
+    ]
+
+    input Enable(void) : ""
+]
+
+@SolidClass base(Targetname, Parentname, Origin, RenderFields,DamageFilter, Button) = func_button : 
+	"A brush entity that's designed to be used for a player-useable button. When used by the player, it moves to a pressed position."
+[
+	movedir(angle) : "Move Direction (Pitch Yaw Roll)" : "0 0 0" : "Specifies the direction of motion to move when the button is used."
+	speed(integer) : "Speed" : 5 : "The speed that the button moves, in inches per second."
+	health(integer) : "Health (Obsolete)" : 0 : "Legacy method of specifying whether or not the button can be shot to activate it. Use the 'Damage Activates' spawnflag instead."
+	lip(integer) : "Lip" : 0 : "The amount, in inches, of the button to leave sticking out of the wall it recedes into when pressed. Negative values make the button recede even further into the wall."
+	master(string) : "Master (Obsolete)" : : "Legacy support: The name of a master entity. If the master hasn't been activated, this button cannot be pressed."
+	sound(string) : "Sound" : ""
+	locked_sound(string) : "Locked Sound" : ""
+    disableshadows(choices): "Disable shadows" : 0 =
+    [
+        0 : "No"
+        1 : "Yes"
+    ]
+
+	wait(integer) : "Delay Before Reset (-1 stay)" : 3 : "Amount of time, in seconds, after the button has been pressed before it returns to the starting position. Once it has returned, it can be used again. If the value is set to -1, the button never returns."
+	spawnflags(flags) =
+	[
+		1: "Don't move" : 0
+        2: "Once" : 0
+		32: "Toggle" : 0
+		256: "Touch Activates": 0
+		512: "Damage Activates": 0
+		1024: "Use Activates" : 1
+		2048: "Starts locked" : 0
+		4096: "Sparks" : 0
+	]
+]
+
+@PointClass base(Origin, Angles) = pattern_joint : ""
+[]
+
+@SolidClass base(Origin, Targetname) = func_tracktrain :
+	"A moving platform that the player can ride. It follows a path of path_track entities.\n" +
+	"NOTE: Build your train so that the front of the train is facing down the X axis. " +
+	"When it spawns it will automatically rotate to face the next path_track on the path."
+[
+    speed(integer) : "Speed" : 100 : ""
+    target(target_destination) : "First stop target" : "" : ""
+    startsound(string) : "Start Sound" : "" : ""
+    loopsound(string) : "Loop Sound" : "" : ""
+    stopsound(string) : "Start Sound" : "" : ""
+
+	output OnStart(void) : "Fired when the train starts moving in either direction."
+    output OnStop(void) : "Fires when the train stopped"
+
+    input StartForward(void) : ""
+    input StartBackward(void) : ""
+    input MoveToPoint(target_destination) : ""
+]
+
+@SolidClass base(Door, Origin) sphere() = func_door : 
+	"A brush entity for use as a player-useable door."
+[
+	movedir(angle) : "Move Direction (Pitch Yaw Roll)" : "0 0 0" : "The direction the door will move, when it opens."
+	filtername(filterclass) : "Block Filter Name" : : "Filter to use to determine entities that block the door. ( Half-Life: Source port only )"
+    volume(integer): "Volume" : 10 : ""
+    radius(string): "Max audible disance" : : ""
+
+    spawnflags(Flags) = [
+        2 : "Random sound pitch" : 0
+    ]
+]

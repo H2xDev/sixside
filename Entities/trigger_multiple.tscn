@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3 uid="uid://bgyteh5idkn2h"]
+
+[ext_resource type="Script" path="res://Entities/trigger_multiple.gd" id="1_wcr3m"]
+
+[node name="TriggerMultiple" type="Node3D"]
+script = ExtResource("1_wcr3m")
+
+[node name="Area3D" type="Area3D" parent="."]
+collision_layer = 2
+collision_mask = 2
+
+[node name="SolidCast" type="CollisionShape3D" parent="Area3D"]

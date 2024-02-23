@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://c2w65kvp0jhgk"]
+
+[ext_resource type="Script" path="res://Entities/logic_timer.gd" id="1_frhaj"]
+
+[node name="LogicTimer" type="Node3D"]
+script = ExtResource("1_frhaj")
+
+[node name="Timer" type="Timer" parent="."]

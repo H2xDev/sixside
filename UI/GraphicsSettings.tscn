@@ -1,0 +1,62 @@
+[gd_scene load_steps=4 format=3 uid="uid://bh5kdrcecf7x1"]
+
+[ext_resource type="Script" path="res://Scripts/GraphicsOptions.gd" id="1_gh7du"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n7b2o"]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+content_margin_bottom = 20.0
+bg_color = Color(0.6, 0.6, 0.6, 0.223529)
+
+[sub_resource type="LabelSettings" id="LabelSettings_iae72"]
+font_size = 50
+
+[node name="GraphicsSettings" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GraphicsSettings" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_n7b2o")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="GraphicsSettings"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="GraphicsSettings/VBoxContainer"]
+layout_mode = 2
+text = "GRAPHICS SETTINGS"
+label_settings = SubResource("LabelSettings_iae72")
+
+[node name="GraphicsOptions" type="VBoxContainer" parent="GraphicsSettings/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+script = ExtResource("1_gh7du")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="GraphicsSettings/VBoxContainer"]
+layout_mode = 2
+alignment = 2
+
+[node name="Apply" type="Button" parent="GraphicsSettings/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "APPLY"
+
+[node name="Close" type="Button" parent="GraphicsSettings/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "CLOSE"

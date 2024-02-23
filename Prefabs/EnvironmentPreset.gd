@@ -1,0 +1,1 @@
+class_name EnvironmentPreset extends Node3D

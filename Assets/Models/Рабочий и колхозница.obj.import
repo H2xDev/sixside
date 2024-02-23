@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://c3nopvt1v3btw"
+path="res://.godot/imported/Рабочий и колхозница.obj-3a6ca9569aaa4bb75e4455f29700956c.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Рабочий и колхозница.obj-3a6ca9569aaa4bb75e4455f29700956c.mesh"]
+
+source_file="res://Assets/Models/Рабочий и колхозница.obj"
+dest_files=["res://.godot/imported/Рабочий и колхозница.obj-3a6ca9569aaa4bb75e4455f29700956c.mesh", "res://.godot/imported/Рабочий и колхозница.obj-3a6ca9569aaa4bb75e4455f29700956c.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false

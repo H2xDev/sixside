@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://ybiyt2y742f3"]
+
+[ext_resource type="Script" path="res://Entities/light.gd" id="1_snp1o"]
+
+[node name="Light" type="Node3D"]
+script = ExtResource("1_snp1o")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+light_energy = 0.0
+omni_attenuation = 2.0

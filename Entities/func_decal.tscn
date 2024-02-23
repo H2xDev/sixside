@@ -1,0 +1,21 @@
+[gd_scene load_steps=5 format=3 uid="uid://btw72exu47i3l"]
+
+[ext_resource type="Script" path="res://Entities/func_decal.gd" id="1_vj4j4"]
+[ext_resource type="Shader" path="res://Shaders/decal.gdshader" id="2_kqjo5"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_06bb5"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_aydy8"]
+render_priority = 0
+shader = ExtResource("2_kqjo5")
+shader_parameter/albedo = Color(1, 1, 1, 1)
+shader_parameter/cube_half_size = 0.5
+shader_parameter/rotation = null
+shader_parameter/surfaceNormal = null
+
+[node name="Infodecal" type="Node3D"]
+script = ExtResource("1_vj4j4")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_06bb5")
+surface_material_override/0 = SubResource("ShaderMaterial_aydy8")

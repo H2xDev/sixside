@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3 uid="uid://ctm3pidbkbcoh"]
+
+[ext_resource type="Script" path="res://Entities/trigger_once.gd" id="1_iprtr"]
+
+[node name="TriggerOnce" type="Node3D"]
+script = ExtResource("1_iprtr")
+entity = null
+
+[node name="Area3D" type="Area3D" parent="."]
+collision_layer = 2
+collision_mask = 2
+
+[node name="SolidCast" type="CollisionShape3D" parent="Area3D"]

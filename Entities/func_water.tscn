@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://dxj4atjhdocay"]
+
+[ext_resource type="Script" path="res://Entities/func_water.gd" id="1_7yvmv"]
+[ext_resource type="Material" uid="uid://cf3xta1laqbjp" path="res://Prefabs/Water/DefaultWater.tres" id="2_vlmss"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_n1la7"]
+
+[node name="FuncWater" type="Node3D"]
+script = ExtResource("1_7yvmv")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_n1la7")
+surface_material_override/0 = ExtResource("2_vlmss")
+
+[node name="Area3D" type="Area3D" parent="."]
+collision_layer = 2
+collision_mask = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
