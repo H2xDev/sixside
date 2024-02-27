@@ -1,0 +1,19 @@
+[gd_scene load_steps=5 format=3 uid="uid://bgc2jitvvde7m"]
+
+[ext_resource type="Script" path="res://Scripts/GameManager.gd" id="1_hlmda"]
+[ext_resource type="PackedScene" uid="uid://b52e2petbtwjx" path="res://Prefabs/LightPreset.tscn" id="1_ih4l7"]
+[ext_resource type="PackedScene" uid="uid://fq65wtdtamgn" path="res://UI/HUD.tscn" id="2_3exka"]
+[ext_resource type="PackedScene" uid="uid://dx8n00cgsym53" path="res://Prefabs/Player/player.tscn" id="3_3kow2"]
+
+[node name="Gameplay" type="Node3D"]
+script = ExtResource("1_hlmda")
+startLevel = "level1a"
+
+[node name="Hud" parent="." instance=ExtResource("2_3exka")]
+
+[node name="LightPreset" parent="." instance=ExtResource("1_ih4l7")]
+
+[node name="Player" parent="." instance=ExtResource("3_3kow2")]
+maxSpeed = 6.66
+frictionGround = 6.0
+canWalljump = false

@@ -91,20 +91,16 @@ func ProcessOpen(percent, backwards):
 
 	openValue = p;
 	
-	print(startPos, moveDistance, p, lip3, p);
 	position = startPos + moveDistance * p - lip3 * p;
 
 func _apply_entity(e, c):
 	super._apply_entity(e, c);
 
-	var _basis = Basis.from_euler(Vector3(e.movedir.x, -e.movedir.y, -e.movedir.z) / 180.0 * PI);
-
 	var mesh = get_mesh();
 	$MeshInstance3D.set_mesh(mesh);
 	$MeshInstance3D/StaticBody3D/CollisionShape3D.shape = get_entity_shape();
 
-	moveDirection = _basis.z;
-	moveDirection = Vector3(moveDirection.z, moveDirection.y, moveDirection.x);
+	moveDirection = get_movement_vector(e.movedir);
 	moveDistance = mesh.get_aabb().size * moveDirection;
 
 	speed = e.speed * config.importScale;

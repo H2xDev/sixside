@@ -1,7 +1,6 @@
 [gd_scene load_steps=9 format=3 uid="uid://ce87q3y4shy17"]
 
 [ext_resource type="Script" path="res://addons/godotvmf/utils/VMFNode.gd" id="1_ijurl"]
-[ext_resource type="Material" uid="uid://cnrib2mh578bi" path="res://Assets/Materials/atmus/dev/se_measuregrid_blue_glass.tres" id="2_fpcpl"]
 [ext_resource type="Material" uid="uid://bxtou2cq0hcij" path="res://Assets/Materials/concrete/concrete04.tres" id="3_454k8"]
 [ext_resource type="Material" uid="uid://bk4ci1jp031bp" path="res://Assets/Materials/lights/white.tres" id="4_gjcdn"]
 [ext_resource type="PackedScene" uid="uid://cctxay2t3n0v4" path="res://Entities/light_spot.tscn" id="5_ldioc"]
@@ -38,15 +37,6 @@ data = PackedVector3Array(0.2828, 0, -0.2829, 0.3696, 0, -0.1531, 0.4, 0, 0, 0.2
 [node name="lightspot_instance" type="Node3D"]
 script = ExtResource("1_ijurl")
 vmf = "D:/Projects/elena/Levels/Brutalist/instances/lightspot.vmf"
-importScale = 0.025
-generateCollision = true
-defaultTextureSize = 1024
-fallbackMaterial = ExtResource("2_fpcpl")
-ignoreTextures = ["TOOLS/TOOLSNODRAW"]
-textureImportMode = 2
-importModels = false
-generateCollisionForModel = true
-overrideModels = false
 
 [node name="Geometry" type="MeshInstance3D" parent="."]
 mesh = SubResource("ArrayMesh_kam0f")

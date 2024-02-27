@@ -36,26 +36,28 @@ func Kill(_param = null):
 func _entity_ready():
 	pass;
 
+func _reparent():
+	if not "parentname" in entity:
+		return;
+
+	var parentNode = get_target(entity.parentname);
+
+	if parentNode:
+		call_deferred("reparent", parentNode, true);
+
 func _ready():
 	if Engine.is_editor_hint():
 		return;
 
 	parse_connections();
-	
-	if "parentname" in entity:
-		var parentNode = get_target(entity.parentname);
-
-		if parentNode:
-			var posDiff = parentNode.global_position - position;
-			call_deferred("reparent", parentNode, false);
-			position = -posDiff;
+	_reparent();
 
 	ValveIONode.namedEntities[name] = self;
 
 	if "StartDisabled" in entity and entity.StartDisabled == 1:
 		enabled = false;
 
-	_entity_ready();
+	call_deferred("_entity_ready");
 
 func _apply_entity(ent, config):
 	self.entity = ent;
@@ -212,6 +214,12 @@ func convert_vector(v):
 
 func convert_direction(v):
 	return Vector3(v.z, v.y, -v.x) / 180.0 * PI;
+
+func get_movement_vector(v):
+	var _basis = Basis.from_euler(Vector3(v.x, -v.y, -v.z) / 180.0 * PI);
+	var dir = _basis.z.normalized();
+
+	return Vector3(dir.z, dir.y, dir.x);
 
 ## Returns the shape of the entity that depends on solids that it have
 func get_entity_shape():

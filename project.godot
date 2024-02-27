@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Project Brutalist"
-run/main_scene="res://Levels/level0.tscn"
+run/main_scene="res://Scenes/Gameplay.tscn"
 config/features=PackedStringArray("4.2", "Forward Plus")
 run/max_fps=60
 boot_splash/show_image=false
@@ -31,10 +31,8 @@ SoundManager="*res://Scripts/SoundManager.gd"
 [display]
 
 window/size/viewport_width=1920
-window/size/viewport_height=900
+window/size/viewport_height=960
 window/size/mode=3
-window/size/initial_position_type=3
-window/size/borderless=true
 window/stretch/mode="viewport"
 window/stretch/aspect="keep_height"
 window/vsync/vsync_mode=0
@@ -45,7 +43,7 @@ run/main_run_args="--gpu-index 0"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/debug_menu/plugin.cfg", "res://addons/godotvmf/plugin.cfg")
+enabled=PackedStringArray("res://addons/debug_menu/plugin.cfg", "res://addons/editorhelper/plugin.cfg", "res://addons/godotvmf/plugin.cfg")
 
 [filesystem]
 
@@ -115,7 +113,6 @@ noclip={
 
 [rendering]
 
-global_illumination/gi/use_half_resolution=true
-global_illumination/sdfgi/frames_to_converge=2
+lights_and_shadows/positional_shadow/soft_shadow_filter_quality=3
 anti_aliasing/quality/use_taa=true
 anti_aliasing/quality/use_debanding=true

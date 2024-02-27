@@ -1,9 +1,8 @@
-[gd_scene load_steps=8 format=3 uid="uid://3yslome6a6ij"]
+[gd_scene load_steps=7 format=3 uid="uid://3yslome6a6ij"]
 
 [ext_resource type="Script" path="res://addons/godotvmf/utils/VMFNode.gd" id="1_k670i"]
 [ext_resource type="PackedScene" uid="uid://c8fnsnyofbu23" path="res://Entities/func_simplify_collision.tscn" id="2_lq1yw"]
-[ext_resource type="Script" path="res://Entities/func_simplify_collision.gd" id="3_84w8a"]
-[ext_resource type="Material" uid="uid://bbsvk3c4knoe5" path="res://Assets/Materials/tools/toolsnodraw.tres" id="4_1sofj"]
+[ext_resource type="Material" uid="uid://bbsvk3c4knoe5" path="res://Assets/Materials/tools/toolsinvisible.tres" id="4_1sofj"]
 [ext_resource type="Material" uid="uid://b01hjexjyf834" path="res://Assets/Materials/metal/metal01.tres" id="5_gv2oi"]
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_l2t74"]
@@ -42,7 +41,6 @@ vmf = "D:/Projects/brutalist/Levels/instances/barrel.vmf"
 
 [node name="func_simplify_collision_75" parent="Entities" instance=ExtResource("2_lq1yw")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6625, 0)
-script = ExtResource("3_84w8a")
 entity = {
 "classname": "func_simplify_collision",
 "editor": {

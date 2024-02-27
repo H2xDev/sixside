@@ -1,0 +1,35 @@
+[remap]
+
+importer="texture"
+type="CompressedTexture2D"
+uid="uid://6orjv0bc15jl"
+path.bptc="res://.godot/imported/Concrete030_2K-JPG_Displacement.jpg-4b788d6e1c29d5f48cdf1016946ee4a7.bptc.ctex"
+metadata={
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
+}
+
+[deps]
+
+source_file="res://Assets/Materials/concrete/concrete04/Concrete030_2K-JPG_Displacement.jpg"
+dest_files=["res://.godot/imported/Concrete030_2K-JPG_Displacement.jpg-4b788d6e1c29d5f48cdf1016946ee4a7.bptc.ctex"]
+
+[params]
+
+compress/mode=2
+compress/high_quality=true
+compress/lossy_quality=0.7
+compress/hdr_compression=1
+compress/normal_map=0
+compress/channel_pack=0
+mipmaps/generate=true
+mipmaps/limit=-1
+roughness/mode=7
+roughness/src_normal="res://Assets/Materials/concrete/concrete04/Concrete030_2K-JPG_NormalGL.jpg"
+process/fix_alpha_border=true
+process/premult_alpha=false
+process/normal_map_invert_y=false
+process/hdr_as_srgb=false
+process/hdr_clamp_exposure=false
+process/size_limit=0
+detect_3d/compress_to=0

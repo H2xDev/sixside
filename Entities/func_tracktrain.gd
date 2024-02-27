@@ -36,15 +36,17 @@ func MoveToPoint(target):
 	SoundManager.PlaySound(global_position, stopSound, 0.2);
 	var loopSnd = SoundManager.PlaySound(global_position, loopSound, 0.2);
 
-	var timer = Anime.Animate(time,
+	Anime.Animate(time,
 		func(percent, _b):
 			percent = Anime.EaseInOutQuad(percent);
 			global_position = startPos.lerp(endPos, percent);
-			loopSnd.global_position = global_position,
+			
+			if loopSnd:
+				loopSnd.global_position = global_position,
 		func():
 			isMoving = false;
 			trigger_output("OnStop");
-			loopSnd.stop();
+			if loopSnd: loopSnd.stop();
 			SoundManager.PlaySound(global_position, stopSound, 0.2));
 
 func _process(_dt):

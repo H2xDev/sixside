@@ -223,7 +223,7 @@ func DoDoubleJump():
 	velocity.y = jumpForce;
 	isDoubleJumped = true;
 
-	SoundManager.PlaySound(global_position + Vector3.UP * 0.1, SoundManager.JETPACK, 0.1, 1.0);
+	# TODO Add double jump sound here
 
 func ProcessCooldowns(delta):
 	wallJumpCooldown = wallJumpCooldown - delta if wallJumpCooldown > 0 else 0;
@@ -340,19 +340,13 @@ func ProcessInteraction():
 		return;
 
 	if Input.is_action_just_pressed("interact"):
-		var origin = head.global_transform.origin;
-		var direction = -head.global_transform.basis.z;
-		var result = Utils.Raycast(world, origin, direction, 2, [self]);
+		var node = HUD.instance.nodeToInteract;
 
-		if not result:
+		if node == null:
 			return;
 
-		if result.collider.has_signal("interact"):
-			result.collider.emit_signal("interact");
-		else:
-			var _owner = result.collider.get_owner();
-			if _owner and _owner.has_signal("interact"):
-				_owner.emit_signal("interact");
+		if node.has_signal("interact"):
+			node.emit_signal("interact");
 
 func ProcessCrouch():
 	isCrouching = Input.is_action_pressed("crouch");
@@ -389,7 +383,7 @@ func ProcessViewBobbing(delta):
 	
 		var bobbingOffset = abs(sin(bobbingTime / 2) * 0.05 * bobbingMultiplier);
 		var verticalOffset = bobbingOffset - smoothedLandingImpact / 20;
-		var horizontalOffset = cos(bobbingTime / 2) * 0.025;
+		var horizontalOffset = cos(bobbingTime / 2) * 0.015;
 
 		var sndPos = global_position + Vector3.UP * 0.1 - rightHead * tilt;
 	

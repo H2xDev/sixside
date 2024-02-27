@@ -2,64 +2,76 @@
 extends ValveIONode
 
 @onready var mi = $MeshInstance3D;
+@onready var de = $Decal;
 
 func _apply_entity(e, c):
 	super._apply_entity(e, c);
 
-	var uv0 = convert_vector(e.uv0);
-	var uv1 = convert_vector(e.uv1);
-	var uv2 = convert_vector(e.uv2);
-	var uv3 = convert_vector(e.uv3);
-	
-	var normal = convert_vector(e.BasisNormal);
-	var material = VMTManager.importMaterial(e.material);
+	var isDecalMode = not "geometry" in e;
 
-	rotation = (e.angles if "angles" in e else Vector3.ZERO) / 180 * PI;
+	var material = VMTManager.importMaterial(e.material) if not isDecalMode else load("res://Assets/Materials/" + e.material + ".png");
 
-	if normal != Vector3.UP and normal != Vector3.DOWN:
-		rotation += Basis.looking_at(normal, Vector3.UP).get_euler();
-		rotation.x += PI / 2;
-		rotation.y += PI;
+	if not material:
+		queue_free();
+		return;
 
-	if normal == Vector3.DOWN:
-		rotation.x += PI;
-
-	global_transform.origin += normal * 0.01;
-	
 	var mesh = ArrayMesh.new();
-	var surface = [];
-	var verts = [uv0, uv1, uv2, uv3];
+
 	var uvs = [
-		Vector2(0, 1),
-		Vector2(0, 0),
-		Vector2(1, 0),
-		Vector2(1, 1),
+		Vector2(e.StartU, e.StartV),
+		Vector2(e.StartU, e.EndV),
+		Vector2(e.EndU, e.EndV),
+		Vector2(e.EndU, e.StartV),
 	];
 
-	if normal.y == -1:
-		uvs = [
-			Vector2(1, 0),
-			Vector2(1, 1),
-			Vector2(0, 1),
-			Vector2(0, 0),
-		];
-
-	var normals = [
-		normal, normal, normal, normal,
+	var verts = [
+		convert_vector(e.uv0) * config.importScale,
+		convert_vector(e.uv1) * config.importScale,
+		convert_vector(e.uv2) * config.importScale,
+		convert_vector(e.uv3) * config.importScale,
 	];
-	var indices = [
-		0, 1, 2,
-		0, 2, 3,
-	];;
-	
-	surface.resize(Mesh.ARRAY_MAX);
-	surface[Mesh.ARRAY_VERTEX] = PackedVector3Array(verts);
-	surface[Mesh.ARRAY_TEX_UV] = PackedVector2Array(uvs);
-	surface[Mesh.ARRAY_NORMAL] = PackedVector3Array(normals);
-	surface[Mesh.ARRAY_INDEX] = PackedInt32Array(indices);
 
-	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, surface);
-	mesh.surface_set_material(0, material);
-	mi.set_mesh(mesh);
-	scale = Vector3.ONE * c.importScale;
-	
+	var st = SurfaceTool.new();
+	var normal = convert_vector(e.BasisNormal);
+
+	st.begin(Mesh.PRIMITIVE_TRIANGLES);
+	st.set_normal(normal);
+
+	var index = 0;
+	for vert in verts:
+		st.set_uv(uvs[index]);
+		st.add_vertex(vert);
+		index += 1;
+
+	var indices = [0, 1, 2, 0, 2, 3];
+	for i in indices:
+		st.add_index(i);
+
+	st.generate_normals();
+	st.generate_tangents();
+	st.set_material(material);
+	st.commit(mesh);
+		
+	var aabb = mesh.get_aabb().size;
+
+	if isDecalMode:
+		de.size.x = aabb.x;
+		de.size.z = aabb.z;
+
+		var s = -1 if normal.dot(Vector3.BACK) > 0 or normal.dot(Vector3.RIGHT) > 0 or normal.dot(Vector3.UP) > 0 else 1;
+
+		var normalmap = load("res://Assets/Materials/" + e.material + "_norm.jpg");
+
+		de.texture_albedo = material;
+		de.texture_normal = normalmap;
+		de.basis.x = -convert_vector(e.BasisU) * s;
+		de.basis.z = convert_vector(e.BasisV) * s;
+		de.basis.y = normal;
+		mi.queue_free();
+	else:
+		de.queue_free();
+		mi.set_mesh(mesh);
+		mi.position += normal * 0.001;
+		mi.basis.x = convert_vector(e.BasisU);
+		mi.basis.z = -convert_vector(e.BasisV);
+		mi.basis.y = normal;

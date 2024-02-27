@@ -291,7 +291,6 @@ static func createMesh(vmfStructure: Dictionary, _offset: Vector3 = Vector3(0, 0
 			if material:
 				surfaceTool.set_material(material);
 
-		surfaceTool.deindex();
 		surfaceTool.generate_normals();
 		surfaceTool.generate_tangents();
 		surfaceTool.commit(mesh);

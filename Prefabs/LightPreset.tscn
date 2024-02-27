@@ -1,48 +1,16 @@
-[gd_scene load_steps=5 format=3 uid="uid://b52e2petbtwjx"]
+[gd_scene load_steps=3 format=3 uid="uid://b52e2petbtwjx"]
 
 [ext_resource type="Script" path="res://Prefabs/EnvironmentPreset.gd" id="1_v58lg"]
-
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_y8cpk"]
-sky_horizon_color = Color(0, 0, 0, 1)
-ground_bottom_color = Color(0, 0, 0, 1)
-ground_horizon_color = Color(0, 0, 0, 1)
-sun_angle_max = 0.0
-
-[sub_resource type="Sky" id="Sky_qg2xk"]
-sky_material = SubResource("ProceduralSkyMaterial_y8cpk")
-
-[sub_resource type="Environment" id="Environment_1ded8"]
-background_mode = 2
-sky = SubResource("Sky_qg2xk")
-ambient_light_source = 3
-tonemap_mode = 2
-tonemap_white = 1.5
-ssr_enabled = true
-ssao_enabled = true
-ssao_power = 3.44609
-ssao_detail = 5.0
-ssao_horizon = 0.0
-ssil_radius = 13.23
-ssil_intensity = 8.76
-ssil_sharpness = 1.0
-sdfgi_enabled = true
-sdfgi_cascades = 5
-sdfgi_min_cell_size = 0.629541
-sdfgi_y_scale = 0
-glow_enabled = true
-volumetric_fog_enabled = true
-volumetric_fog_density = 0.03
-volumetric_fog_length = 200.0
-adjustment_contrast = 0.88
+[ext_resource type="Environment" uid="uid://72scekvdpg4y" path="res://Envs/LightPreset.tres" id="2_b8prw"]
 
 [node name="LightPreset" type="Node3D"]
 script = ExtResource("1_v58lg")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_1ded8")
+environment = ExtResource("2_b8prw")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 12.8559, 2.37088, 0.607093)
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
 light_color = Color(0.478431, 0.584314, 0.619608, 1)
 light_indirect_energy = 4.0
 light_volumetric_fog_energy = 4.0

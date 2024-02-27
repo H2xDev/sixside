@@ -116,6 +116,18 @@
 @PointClass base(Origin, Angles) = pattern_joint : ""
 []
 
+@PointClass base(Origin, Targetname) = level_manager : ""
+[
+    spawnflags(flags) = [
+        1: "Immediate" : 0
+    ]
+
+    level(string) : "Level to load" : "" : ""
+
+    output OnLevelLoaded(void) : ""
+    input LoadLevel(void) : ""
+]
+
 @SolidClass base(Origin, Targetname) = func_tracktrain :
 	"A moving platform that the player can ride. It follows a path of path_track entities.\n" +
 	"NOTE: Build your train so that the front of the train is facing down the X axis. " +

@@ -1,2 +1,2 @@
 @tool
-extends LogicCase;
+extends ValveIONode;
