@@ -1,16 +1,23 @@
 class_name MDLManager;
 
 static var _modelCache = [];
+static var logged = {};
+static var cache = {};
 
-static var projectConfig:
-	get:
-		return VMFConfig.getConfig();
+static func clearCache():
+	MDLManager.cache = {};
+	MDLManager.logged = {};
 
 static func getModelMaterials(modelPath: String):
-	var input = (projectConfig.gameInfoPath + '/' + modelPath).replace('//', '/');
+	var input = (VMFConfig.config.gameInfoPath + '/' + modelPath).replace('//', '/');
+	MDLManager.logged = {} if not MDLManager.logged else MDLManager.logged;
+
+	var h = hash(modelPath);
 
 	if not FileAccess.file_exists(input):
-		VMFLogger.warn('Model not found: ' + input);
+		if not h in logged:
+			VMFLogger.warn('Model not found: ' + input);
+			logged[h] = true;
 		return [];
 
 	var file = FileAccess.open(input, FileAccess.READ);
@@ -25,81 +32,113 @@ static func getModelMaterials(modelPath: String):
 	var dirs = [];
 	
 	file.seek(textureDirOffset);
+	file.seek(file.get_32());
 	for i in range(textureDirCount):
-		var offset = file.get_32();
-		file.seek(offset);
-		var dir = file.get_buffer(64).get_string_from_ascii().replace('\\', '/');
-		dirs.append(dir);
+		var bytes = PackedByteArray();
+		var currentByte = file.get_8();
+
+		while (currentByte != 0):
+			bytes.append(currentByte);
+			currentByte = file.get_8();
+		
+		var dir = bytes.get_string_from_ascii();
+		if dir: dirs.append(dir);
 
 	file.seek(textureOffset);
 
 	for i in range(textureCount):
-		var nameOffset = textureOffset + 64 * i + file.get_32();
+		var mstudiotextureOffset = textureOffset + 64 * i;
+		file.seek(mstudiotextureOffset);
 		
-		file.seek(nameOffset);
-		var name = file.get_buffer(64).get_string_from_ascii();
+		var nameOffset = file.get_32();
+		file.seek(mstudiotextureOffset + nameOffset);
+		
+		var bytes = PackedByteArray();
+		var currentByte = file.get_8();
+
+		while (currentByte != 0):
+			bytes.append(currentByte);
+			currentByte = file.get_8();
+		
+		var name = bytes.get_string_from_ascii();
 		
 		for path in dirs:
 			materials.append(path + name);
-
+			
 	file.close();
 
 	return materials;
 
 
-static func loadModel(modelPath: String, generateCollision: bool = false, override: bool = false):
-	var input = (projectConfig.gameInfoPath + '/' + modelPath).replace('//', '/');
-	var resourcePath = (projectConfig.modelsFolder + '/' + input.split('models/')[-1]).replace('.mdl', '.tscn');
+static func loadModel(modelPath: String, generateCollision: bool = false):
+	var input = (VMFConfig.config.gameInfoPath + '/' + modelPath).replace('//', '/');
+	var resourcePath = (VMFConfig.config.models.targetFolder + '/' + input.split('models/')[-1]).replace('.mdl', '.tscn');
+
+	MDLManager.logged = {} if not MDLManager.logged else MDLManager.logged;
+	MDLManager.cache = {} if not MDLManager.cache else MDLManager.cache;
+
 	var output = input.replace('.mdl', '.obj');
 	var resourceFolder = '/'.join(resourcePath.split('/').slice(0, -1));
 
-	if not "mdl2obj" in projectConfig:
-		VMFLogger.error('MDL2OBJ not set in vmf.config.json, model import skipped');
-		return;
-
-	if not FileAccess.file_exists(projectConfig.mdl2obj):
-		VMFLogger.error('MDL2OBJ not found, model import skipped');
-		return;
+	var h = hash(modelPath);
 
 	if not FileAccess.file_exists(input):
-		VMFLogger.warn('Model not found: ' + input);
+		if not h in logged:
+			VMFLogger.warn('Model not found: ' + input);
+			logged[h] = true;
 		return;
 
-	if ResourceLoader.exists(resourcePath) and not override:
-		return load(resourcePath);
+	if h in MDLManager.cache:
+		return MDLManager.cache[h]
 
-	var materials = getModelMaterials(modelPath);
-	var materialPath = materials[0] if materials.size() > 0 else null;
-	var material = VMTManager.importMaterial(materialPath, true) if materialPath else null;
+	if ResourceLoader.exists(resourcePath):
+		var res = load(resourcePath);
+		MDLManager.cache[h] = res;
+		return res;
+
+	var materials = getModelMaterials(modelPath)\
+	.map(
+		func (materialPath):
+			VTFTool.importMaterial(materialPath, true);
+			return VTFTool.getMaterial(materialPath);
+	)\
+	.filter(func(material): return material != null);
 
 	var processOut = [];
-	var process = OS.execute(projectConfig.mdl2obj, [input, output], processOut, false, false);
+	var executable = ProjectSettings.globalize_path(VMFConfig.config.mdl2obj) if VMFConfig.config.mdl2obj.begins_with("res:") else VMFConfig.config.mdl2obj;
+	var process = OS.execute(executable, [input, output], processOut, false, false);
 	var mesh = ObjParse.load_obj(output);
 	DirAccess.remove_absolute(output);
-
-	if material:
-		mesh.surface_set_material(0, material);
 
 	var scene = PackedScene.new();
 	var root = Node3D.new();
 	var model = MeshInstance3D.new();
 
+	root.name = modelPath.get_file().get_basename();
+	model.name = modelPath.get_file().get_basename() + '_mesh';
 	model.set_mesh(mesh);
-
 	root.add_child(model);
+	
 	model.set_owner(root);
+
+	var matIndex = 0;
+	for material in materials:
+		mesh.surface_set_material(matIndex, material);
+		matIndex += 1;
 
 	if generateCollision:
 		model.create_multiple_convex_collisions();
 
-
 	scene.pack(root);
-	print('Saving into ', resourcePath);
 
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(resourceFolder));
 	ResourceSaver.save(scene, resourcePath);
 
-	VMFLogger.log('MDL Imported: ' + input);
-	VMFLogger.log('MDL Log:\n' + '\n'.join(processOut));
+	model.queue_free();
+	root.queue_free();
 
-	return load(resourcePath);
+	scene.take_over_path(resourcePath);
+
+	MDLManager.cache[h] = scene;
+	
+	return scene;

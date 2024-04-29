@@ -97,13 +97,13 @@ func _entity_ready():
 		audioStream.max_distance = radius;
 
 	if not have_flag(FLAG_START_SILENT):
-		audioStream.play(0.0);
+		PlaySound();
 	else:
 		audioStream.stop();
 	
 
 func _apply_entity(e, c):
 	super._apply_entity(e, c);
-	radius = e.radius * config.importScale;
+	radius = e.radius * config.import.scale;
 	targetVolume = float(e.health) / 10.0 if "health" in e else 1.0;
-	targetPitch = float(e.pitch / 128) if "pitch" in e else 1.0;
+	targetPitch = float(e.pitch / 100) if "pitch" in e else 1.0;

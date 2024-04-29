@@ -13,8 +13,6 @@ func _entity_ready():
 func Trigger(_param = null):
 	if flags & 1 == 1:
 		Kill();
-	
-	print("Triggering");
 
 	trigger_output("OnTrigger");
 

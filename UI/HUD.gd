@@ -9,6 +9,7 @@ var points = {};
 var nodeToInteract = null;
 
 @onready var pointRef = $InteractionPoint;
+@onready var fadePanel: Panel = $FadePanel;
 
 func _ready():
 	HUD.instance = self;
@@ -34,7 +35,7 @@ func ProcessInteractionPoints():
 	var p = Player.instance;
 	var screenCenter = get_viewport().size / 2;
 
-	nodeToInteract = interactives.filter(func(node):
+	var validNodes = interactives.filter(func(node):
 		if not "forward" in node:
 			return false;
 
@@ -51,7 +52,12 @@ func ProcessInteractionPoints():
 			points[node.name].position = p.camera.unproject_position(node.global_position);
 
 		return isValid;
-	).reduce(func(curr, node):
+	);
+
+	if p.isFrozen:
+		return;
+
+	nodeToInteract = validNodes.reduce(func(curr, node):
 		var el = points[node.name];
 		var currEl = points[curr.name] if curr != null else null;
 

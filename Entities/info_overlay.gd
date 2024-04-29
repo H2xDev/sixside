@@ -9,7 +9,8 @@ func _apply_entity(e, c):
 
 	var isDecalMode = not "geometry" in e;
 
-	var material = VMTManager.importMaterial(e.material) if not isDecalMode else load("res://Assets/Materials/" + e.material + ".png");
+	VTFTool.importMaterial(e.material);
+	var material = VTFTool.getMaterial(e.material) if not isDecalMode else load("res://Assets/Materials/" + e.material + ".png");
 
 	if not material:
 		queue_free();
@@ -25,10 +26,10 @@ func _apply_entity(e, c):
 	];
 
 	var verts = [
-		convert_vector(e.uv0) * config.importScale,
-		convert_vector(e.uv1) * config.importScale,
-		convert_vector(e.uv2) * config.importScale,
-		convert_vector(e.uv3) * config.importScale,
+		convert_vector(e.uv0) * config.import.scale,
+		convert_vector(e.uv1) * config.import.scale,
+		convert_vector(e.uv2) * config.import.scale,
+		convert_vector(e.uv3) * config.import.scale,
 	];
 
 	var st = SurfaceTool.new();

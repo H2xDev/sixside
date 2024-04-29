@@ -28,6 +28,7 @@ collision_layer = 3
 script = ExtResource("1_e2wnl")
 fov = 60.0
 acceleration = 100.0
+maxSpeed = 11.0
 sprintRate = 2.0
 canWalljump = true
 wallRunningGravityAffection = 4.0

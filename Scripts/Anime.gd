@@ -64,6 +64,8 @@ func _init():
 
 func _process(delta):
 	for timer in currentTimers:
+		if not timer:
+			continue;
 		timer.current += delta;
 		var percent = min(1.0, timer.current / timer.duration);
 

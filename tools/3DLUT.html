@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+</head>
+<body>
+  <input type="file" id="fileSelector">
+
+  <script>
+    const fileSelector = document.getElementById('fileSelector');
+
+    fileSelector.addEventListener('change', ({ currentTarget: input }) => {
+      const [file] = input.files;
+      new Promise(resolve => {
+        const r = new FileReader();
+        r.onload = () => resolve(r.result);
+        r.readAsText(file);
+      })
+        .then(data => {
+          const lines = data.split('\n').filter((v) => Boolean(v.trim()) && !v.startsWith('#'));
+
+          const title = lines.splice(0, 1)[0];
+          const size = +lines.splice(0, 1)[0].split(' ')[1];
+
+          const c = document.createElement('canvas').getContext('2d');
+          c.canvas.width = size * size;
+          c.canvas.height = size;
+
+          const d = c.getImageData(0, 0, size * size, size);
+          const pixels = c.canvas.width * c.canvas.height * 4;
+
+          for (let b = 0; b < size; b++)
+          for (let g = 0; g < size; g++)
+          for (let r = 0; r < size; r++) {
+            const i = (b * size + g) * size + r;
+
+            const [rc, gc, bc] = lines[i].split(' ').map(v => +v / (size - 1) * 255);
+
+            d.data[i * 4 + 0] = rc;
+            d.data[i * 4 + 1] = gc;
+            d.data[i * 4 + 2] = bc;
+            d.data[i * 4 + 3] = 255;
+          }
+
+          c.putImageData(d, 0, 0);
+
+          c.save();
+          c.translate(0, 0);
+          c.scale(1, 1);
+          c.drawImage(c.canvas, 0, 0, c.canvas.width, c.canvas.height);
+          c.restore();
+
+          document.body.appendChild(c.canvas);
+        });
+    });
+    
+  </script>
+</body>
+</html>

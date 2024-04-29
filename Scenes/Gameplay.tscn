@@ -7,7 +7,7 @@
 
 [node name="Gameplay" type="Node3D"]
 script = ExtResource("1_hlmda")
-startLevel = "level1a"
+startLevel = "level2"
 
 [node name="Hud" parent="." instance=ExtResource("2_3exka")]
 

@@ -6,15 +6,9 @@ static var cached = {};
 func _apply_entity(e, c):
 	super._apply_entity(e, c);
 
-	var config = VMFConfig.getConfig();
-
-	if not "instancesFolder" in config:
-		VMFLogger.warn("instancesFolder is not defined in the config. Instance importing skipped.");
-		return;
-
 	var file = VMFInstanceManager.correctInstancePath(e, c.vmf);
 	var basename = file.get_file().get_basename();
-	var path = (config.instancesFolder + "/" + basename + ".tscn").replace("//", "/").replace("res:/", "res://");
+	var path = (VMFConfig.config.import.instancesFolder + "/" + basename + ".tscn").replace("//", "/").replace("res:/", "res://");
 
 	if not ResourceLoader.exists(path):
 		var struct = ValveFormatParser.parse(file);
@@ -45,9 +39,8 @@ func _apply_entity(e, c):
 	node.name = basename + '_instance';
 
 	node.position = position;
+	node.rotation = rotation;
 	get_parent().add_child(node);
 	node.set_owner(get_owner());
-	node.rotation_order = 3;
-	node.rotation = convert_direction(e.angles);
 
 	queue_free();

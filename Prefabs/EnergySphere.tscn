@@ -1,0 +1,29 @@
+[gd_scene load_steps=3 format=3 uid="uid://co4h6kwxpnccs"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_oc7lg"]
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+emission_energy_multiplier = 13.9
+
+[sub_resource type="SphereMesh" id="SphereMesh_mwfs7"]
+material = SubResource("StandardMaterial3D_oc7lg")
+radius = 0.2
+height = 0.4
+radial_segments = 8
+rings = 8
+
+[node name="EnergySphere" type="Node3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+cast_shadow = 0
+mesh = SubResource("SphereMesh_mwfs7")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0105124, 0.03195, 0.00594139)
+light_color = Color(0.2, 0.866667, 1, 1)
+light_energy = 10.0
+light_volumetric_fog_energy = 3.33
+light_specular = 10.1
+shadow_enabled = true
+omni_range = 20.0
+omni_shadow_mode = 0

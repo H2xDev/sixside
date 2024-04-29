@@ -51,7 +51,7 @@ func TurnOn(_param):
 func _apply_entity(ent, c):
 	super._apply_entity(ent, c);
 
-	var importScale = config.importScale;
+	var importScale = config.import.scale;
 	var color = ent._light;
 
 	var radius = ent._fifty_percent_distance if "_fifty_percent_distance" in ent else 0;

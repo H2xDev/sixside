@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://4g0gdpfrlf8c"]
+[gd_scene load_steps=9 format=3 uid="uid://4g0gdpfrlf8c"]
 
 [ext_resource type="Theme" uid="uid://ivs6ohejpwem" path="res://UI/Defaults.tres" id="1_e704i"]
 [ext_resource type="FontFile" uid="uid://cqatd4k7ws4b7" path="res://Assets/UI/Kunstware.ttf" id="2_fs8i8"]
@@ -12,6 +12,9 @@ font_size = 24
 [sub_resource type="LabelSettings" id="LabelSettings_85ab3"]
 font = ExtResource("2_fs8i8")
 font_size = 100
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1fnab"]
+bg_color = Color(0, 0, 0, 1)
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -87,6 +90,16 @@ text = "QUIT
 [node name="GraphicsSettings" parent="MarginContainer/HBoxContainer" instance=ExtResource("4_ycedr")]
 layout_mode = 2
 size_flags_horizontal = 3
+
+[node name="FadeBox" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1fnab")
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("5_t17dd")

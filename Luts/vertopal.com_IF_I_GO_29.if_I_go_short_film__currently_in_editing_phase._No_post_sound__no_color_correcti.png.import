@@ -1,0 +1,26 @@
+[remap]
+
+importer="3d_texture"
+type="CompressedTexture3D"
+uid="uid://bae5g21fg7e5u"
+path="res://.godot/imported/vertopal.com_IF_I_GO_29.if_I_go_short_film__currently_in_editing_phase._No_post_sound__no_color_correcti.png-2c81c00afb1474b7fa4fbc921d020d88.ctex3d"
+metadata={
+"vram_texture": false
+}
+
+[deps]
+
+source_file="res://Luts/vertopal.com_IF_I_GO_29.if_I_go_short_film__currently_in_editing_phase._No_post_sound__no_color_correcti.png"
+dest_files=["res://.godot/imported/vertopal.com_IF_I_GO_29.if_I_go_short_film__currently_in_editing_phase._No_post_sound__no_color_correcti.png-2c81c00afb1474b7fa4fbc921d020d88.ctex3d"]
+
+[params]
+
+compress/mode=0
+compress/high_quality=false
+compress/lossy_quality=0.7
+compress/hdr_compression=1
+compress/channel_pack=0
+mipmaps/generate=false
+mipmaps/limit=-1
+slices/horizontal=33
+slices/vertical=1

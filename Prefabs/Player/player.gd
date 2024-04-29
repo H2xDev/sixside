@@ -21,7 +21,7 @@ enum Abilities {
 @onready var audioPlayer = $AudioPlayer as AudioStreamPlayer3D;
 @onready var headPosition: Vector3 = head.transform.origin;
 @onready var world = get_world_3d();
-@onready var waterPostprocess = %WaterPostprocess;
+@onready var waterPostprocess = %WaterPostprocess;	
 
 @export_category("Options")
 @export_range(0.1, 1, 0.1) var mouseSensitivity: float = 0.1;
@@ -74,6 +74,7 @@ const COOLDOWN_WALLJUMP = 0.25;
 var noclip: bool = false;
 var isOnLadder: bool = false;
 var isInWater: bool = false;
+var isFrozen = false;
 
 var isObsacleAboveHead:
 	get:
@@ -175,12 +176,8 @@ var isWallRunning:
 
 		return newState;
 
-func ProcessFov(delta):
-	var multiplier = 0.9 + moveRate / 10;
-	camera.fov = lerp(camera.fov, fov * multiplier, delta * 7);
-
 func ProcessMouseLook(event):
-	if (isControlsDisabled):
+	if isControlsDisabled or isFrozen:
 		return;
 
 	if event is InputEventMouseMotion:
@@ -230,8 +227,7 @@ func ProcessCooldowns(delta):
 	shake = lerp(shake, 0.0, delta * 5);
 
 func ProcessJump(): 
-	if noclip:
-		return;
+	if noclip: return;
 
 	if Input.is_action_just_pressed("jump"):
 		if is_on_floor():
@@ -249,8 +245,7 @@ func PlayLandingSound():
 		SoundManager.PlayRandomSound(p, SoundManager.FootstepsSounds.GROUND, 0.1, 1.0, "footstep"));
 
 func ProcessGravity(delta):
-	if noclip or isInWater:
-		return;
+	if noclip or isInWater or isFrozen: return;
 
 	var gravityRate = 0.0 if isWallRunning else 1.0;
 
@@ -265,7 +260,6 @@ func ProcessGravity(delta):
 			landingImpact = collectedLandingImpact;
 			collectedLandingImpact = 0;
 
-
 func ProcessNoclip():
 	if Input.is_action_just_pressed("noclip"):
 		noclip = not noclip;
@@ -276,7 +270,7 @@ func ProcessCameraRecoil(delta):
 	cameraRecoil = lerp(cameraRecoil, Vector3.ZERO, delta * 10);
 
 func ProcessSurfaceMovement(delta: float, inputDir: Vector2):
-	var isSprinting = true;
+	var isSprinting = Input.is_action_pressed("sprint");
 	var targetRate = 1.0 if not isSprinting else sprintRate;
 	
 	moveRate = lerp(moveRate, targetRate, delta * 4);
@@ -317,6 +311,8 @@ func ProcessWaterMovement(delta: float, inputDir: Vector2):
 	velocity *= 1 / (1 + waterFriction * delta);
 
 func ProcessMovement(delta: float):
+	if isFrozen: return;
+
 	var inputDir = Input.get_vector("left", "right", "forward", "backward") if not isControlsDisabled else Vector2(0, 0);
 	
 	if not noclip and not isInWater:
@@ -333,6 +329,7 @@ func ProcessMovement(delta: float):
 
 
 func MoveAndSlide():
+	if isFrozen: return;
 	move_and_slide();
 
 func ProcessInteraction():
@@ -410,44 +407,7 @@ func ProcessViewBobbing(delta):
 
 func ResetCamera():
 	camera.make_current();
-
-func MakeTransitionToCamera(
-	targetCamera: Camera3D,
-	onEnd: Callable = func(): pass,
-	duration: float = 0.5,
-	easeForwards: Callable = Anime.EaseOutCircle,
-	easeBackwards: Callable = Anime.EaseInCircle,
-):
-		var startPos = camera.global_transform.origin;
-		var startRot = camera.global_transform.basis;
-		var startFov = camera.fov;
-
-		var endPos = targetCamera.global_transform.origin;
-		var endRot = targetCamera.global_transform.basis;
-		var endFov = targetCamera.fov;
-
-		var processAnimation = func(percent, backwards):
-			var p = easeForwards.call(percent) if not backwards else easeBackwards.call(percent);
-
-			targetCamera.global_transform.origin = lerp(startPos, endPos, p);
-			targetCamera.global_transform.basis = startRot.slerp(endRot, p);
-			targetCamera.fov = lerp(startFov, endFov, p);
-
-		Anime.Animate(duration, processAnimation, onEnd);
-
-		return func(_onEnd: Callable = func(): pass, newDuration = duration):
-			Anime.Animate(
-				newDuration,
-				processAnimation,
-				func():
-					_onEnd.call();
-					ResetCamera()
-					targetCamera.global_transform.origin = endPos;
-					targetCamera.global_transform.basis = endRot;
-					targetCamera.fov = endFov,
-				true
-			);
-
+	$Head/Camera3D/AudioListener3D.make_current();
 
 func ApplyRotation(targetBasis: Basis):
 	head.rotation.x = targetBasis.get_euler().x;
@@ -472,7 +432,7 @@ func ProcessWaterpostProcess():
 
 	if waterPostprocess.visible != isCameraUnderwater:
 		waterPostprocess.visible = isCameraUnderwater;
-
+ 
 func ApplyPostprocessWaterParams(sourceWaterMesh: MeshInstance3D):
 	isInWater = true;
 
@@ -488,6 +448,36 @@ func ApplyPostprocessWaterParams(sourceWaterMesh: MeshInstance3D):
 
 	waterPostprocess.material_override.set_shader_parameter("deepWaterColor", sourceColor);
 	waterPostprocess.material_override.set_shader_parameter("depthFactor", sourceDepth);
+	
+func ViewTransitionTo(targetCamera: Camera3D, duration = 0.5, cb = null, config = {}):
+	var cameraFrom = config.get('cameraFrom', camera);
+	var ease = config.get('ease', Tween.EASE_OUT);
+	var trans = config.get('trans', Tween.TRANS_SINE);
+
+	var cam = Camera3D.new();
+	var isBackwards = duration < 0;
+	
+	var from = cameraFrom if not isBackwards else targetCamera;
+	var to = targetCamera if not isBackwards else cameraFrom;
+	
+	var tween = create_tween().set_trans(trans).set_ease(ease);
+	
+	get_tree().current_scene.add_child(cam);
+	cam.make_current();
+	cam.global_transform = from.global_transform;
+	cam.fov = from.fov;
+
+	tween.tween_property(cam, "global_transform", to.global_transform, abs(duration));
+	tween.parallel().tween_property(cam, 'fov', to.fov, abs(duration));
+	tween.finished.connect(cam.queue_free);
+
+	if cb: tween.finished.connect(cb);
+	
+	tween.finished.connect(func(): 
+		tween.call_deferred("kill")
+		cam.call_deferred('queue_free');
+	);
+	tween.play();
 
 # INPUTS
 
@@ -503,6 +493,12 @@ func EnableDoubleJumb(_param = null):
 func DisableDoubleJump(_param = null):
 	canDoubleJump = false;
 
+func Freeze(_param = null):
+	isFrozen = true;
+	
+func Unfreeze(_param = null):
+	isFrozen = false;
+
 func Shake(args):
 	args = args.split(" ");
 	var duration = float(args[0]);
@@ -516,6 +512,7 @@ func _input(event):
 func _ready():
 	Player.instance = self;
 	ValveIONode.define_alias('!player', self);
+	camera.fov = fov;
 
 	$Sprite3D.free();
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED);
@@ -534,11 +531,21 @@ func _ready():
 
 	wallRunStart.connect(func ():
 		velocity.y = 0.0);
+	
+	GameManager.presave.append(self);
+
+func get_save_data():
+	return {
+		"abilities": [canWalljump, canDoubleJump],
+	};
+
+func set_save_data(data):
+	canWalljump = data["abilities"][0];
+	canDoubleJump = data["abilities"][1];
 
 func _process(delta):
 	ProcessCrouch();
 	ProcessInteraction();
-	ProcessFov(delta);
 	ProcessNoclip();
 	ProcessWaterpostProcess();
 	ProcessCooldowns(delta);

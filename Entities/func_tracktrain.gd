@@ -8,6 +8,8 @@ var loopSound = null;
 var stopSound = null;
 var isMoving = false;
 
+const FLAG_LINEAR = 1;
+
 func _entity_ready():
 	if "startsound" in entity:
 		startSound = load("res://Assets/Sounds/" + entity.startsound);
@@ -32,13 +34,17 @@ func MoveToPoint(target):
 	var startPos = global_position;
 	var endPos = targetNode.global_position;
 	var time = (endPos - startPos).length() / entity.speed;
+	var volume = entity.get('volume', 2) / 10;
 
-	SoundManager.PlaySound(global_position, stopSound, 0.2);
-	var loopSnd = SoundManager.PlaySound(global_position, loopSound, 0.2);
+	if startSound:
+		SoundManager.PlaySound(global_position, startSound, volume);
+		
+	var loopSnd = SoundManager.PlaySound(global_position, loopSound, volume);
+	var isLinear = have_flag(FLAG_LINEAR);
 
 	Anime.Animate(time,
 		func(percent, _b):
-			percent = Anime.EaseInOutQuad(percent);
+			percent = Anime.EaseInOutQuad(percent) if not isLinear else percent;
 			global_position = startPos.lerp(endPos, percent);
 			
 			if loopSnd:
@@ -47,7 +53,7 @@ func MoveToPoint(target):
 			isMoving = false;
 			trigger_output("OnStop");
 			if loopSnd: loopSnd.stop();
-			SoundManager.PlaySound(global_position, stopSound, 0.2));
+			SoundManager.PlaySound(global_position, stopSound, volume));
 
 func _process(_dt):
 	self.dt = _dt;
@@ -60,4 +66,4 @@ func _apply_entity(e, c):
 	$MeshInstance3D.set_mesh(mesh);
 	$StaticBody3D/CollisionShape3D.shape = get_entity_shape();
 
-	e.speed = e.speed * config.importScale;
+	e.speed = e.speed * config.import.scale;

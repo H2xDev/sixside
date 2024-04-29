@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3 uid="uid://w1q6hjp2yv6l"]
+
+[ext_resource type="Script" path="res://Entities/trigger_push.gd" id="1_qk8xo"]
+
+[node name="TriggerPush" type="Node3D"]
+script = ExtResource("1_qk8xo")
+acceleration = null
+
+[node name="Area3D" type="Area3D" parent="."]
+collision_layer = 2
+collision_mask = 2
+
+[node name="SolidCast" type="CollisionShape3D" parent="Area3D"]

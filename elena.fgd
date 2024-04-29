@@ -65,10 +65,19 @@
     ]
 ]
 
+@SolidClass base(Origin) = trigger_save : ""
+[]
+
 @SolidClass base(Origin) = func_decal : ""
 [
     direction(angle): "Decal direction" : "90 0 0" : ""
     texture(material): "Texture" : "" : ""
+]
+
+@SolidClass base(Origin, Targetname) = func_portal : ""
+[
+    direction(angle): "Direction" : "90 0 0" : ""
+    targetPortal(target_destination): "Target portal": "" : ""
 ]
 
 @SolidClass base(Targetname, Origin) = func_audio_fx : ""
@@ -116,6 +125,14 @@
 @PointClass base(Origin, Angles) = pattern_joint : ""
 []
 
+@PointClass base(Origin, Angles, Targetname) = env_fade : ""
+[
+    color(color255) : "Color" : "255 255 255 255" : ""
+    duration(integer) : "Duration" : 1 : ""
+
+    input Fade(integer) : ""
+]
+
 @PointClass base(Origin, Targetname) = level_manager : ""
 [
     spawnflags(flags) = [
@@ -125,7 +142,44 @@
     level(string) : "Level to load" : "" : ""
 
     output OnLevelLoaded(void) : ""
+    output OnLevelPlaced(void) : ""
     input LoadLevel(void) : ""
+    input PlaceLevel(void) : ""
+]
+
+@PointClass base(Origin, Targetname) = interaction_controller : ""
+[
+    ent1(target_destination) : "Entity 1" : "" : ""
+    ent2(target_destination) : "Entity 2" : "" : ""
+    ent3(target_destination) : "Entity 3" : "" : ""
+    ent4(target_destination) : "Entity 4" : "" : ""
+    ent5(target_destination) : "Entity 5" : "" : ""
+    ent6(target_destination) : "Entity 6" : "" : ""
+    ent7(target_destination) : "Entity 7" : "" : ""
+    ent8(target_destination) : "Entity 8" : "" : ""
+    camera(target_destination) : "Camera" : "" : ""
+    inputName(string) : "Input name" : "Press" : ""
+    param(string): "Param": ""
+
+    input Begin(void) : ""
+    output OnStop(void) : ""
+]
+
+@PointClass base(Origin, Targetname) = bullet_emitter : ""
+[
+    bulletPath(string) : "Bullet object" : "" : ""
+    movedir(angle) : "Direction" : "" : ""
+    groupName(string): "Group": "" : ""
+
+    input Shoot(void) : ""
+    output OnShoot(void) : ""
+]
+
+@SolidClass base(Origin, Targetname) = bullet_receiver : ""
+[
+    source(string) : "Receive group" : "": ""
+
+    output OnReceive(void) : ""
 ]
 
 @SolidClass base(Origin, Targetname) = func_tracktrain :
@@ -133,7 +187,13 @@
 	"NOTE: Build your train so that the front of the train is facing down the X axis. " +
 	"When it spawns it will automatically rotate to face the next path_track on the path."
 [
+    spawnflags(flags) = [
+        1: "Linear" : 0
+    ]
+
     speed(integer) : "Speed" : 100 : ""
+    volume(integer) : "Volume" : 2 : ""
+
     target(target_destination) : "First stop target" : "" : ""
     startsound(string) : "Start Sound" : "" : ""
     loopsound(string) : "Loop Sound" : "" : ""
@@ -157,5 +217,6 @@
 
     spawnflags(Flags) = [
         2 : "Random sound pitch" : 0
+        8 : "Linear" : 0
     ]
 ]

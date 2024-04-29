@@ -1,0 +1,25 @@
+[gd_scene load_steps=3 format=3 uid="uid://cidbywossas2i"]
+
+[ext_resource type="Script" path="res://Entities/func_portal.gd" id="1_dpvxg"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_v045i"]
+size = Vector3(1, 0.1, 0.1)
+
+[node name="FuncPortal" type="Node3D"]
+script = ExtResource("1_dpvxg")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+cast_shadow = 0
+
+[node name="SubViewport" type="SubViewport" parent="."]
+gui_disable_input = true
+
+[node name="Camera3D" type="Camera3D" parent="SubViewport"]
+
+[node name="ReferenceTransform" type="Node3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="ReferenceTransform"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.485737, 1.19209e-07, -0.00341415)
+mesh = SubResource("BoxMesh_v045i")
+
+[node name="CameraTransform" type="Node3D" parent="."]

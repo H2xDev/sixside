@@ -8,6 +8,7 @@ const FLAG_STARTS_LOCKED = 2048;
 
 var isLocked = false;
 var isUsed = false;
+
 @export var moveDirection = Vector3.UP;
 @export var moveDistance = Vector3.UP;
 @export var forward = Vector3.UP;
@@ -53,22 +54,25 @@ func _entity_ready():
 
 	if "locked_sound" in entity and typeof(entity.locked_sound) == TYPE_STRING:
 		lockedSound = load("res://Assets/Sounds/" + entity.locked_sound);
-
-	HUD.instance.AppendInteractive(self);
+	
+	if HUD.instance:
+		HUD.instance.AppendInteractive(self);
 
 func AnimateMovement():
 	isAnimating = true;
 	Anime.Animate(
 		0.25,
 		func(process, _b):
-			position = startPos + moveDistance * 0.5 * sin(PI * process),
+			position = startPos + moveDistance * 0.2 * sin(PI * process),
 		func ():
 			isAnimating = false);
 
 func _exit_tree():
 	if Engine.is_editor_hint():
 		return;
-	HUD.instance.RemoveInteractive(self);
+	
+	if HUD.instance:
+		HUD.instance.RemoveInteractive(self);
 
 func _apply_entity(e, c):
 	super._apply_entity(e, c);
@@ -80,3 +84,4 @@ func _apply_entity(e, c):
 	moveDirection = -get_movement_vector(e.movedir);
 	moveDistance = mesh.get_aabb().size * moveDirection;
 	forward = moveDirection.normalized();
+

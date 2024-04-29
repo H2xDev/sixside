@@ -10,16 +10,17 @@ func _entity_ready():
 	_TeleportPlayer();
 
 func _TeleportPlayer(editor = false):
-	var root = get_tree().get_edited_scene_root() if editor else get_tree().get_root().get_node(NodePath('Gameplay'));
+	var root = get_tree().get_edited_scene_root() if editor else get_tree().get_root().get_node_or_null(NodePath('Gameplay'));
 
 	if not root:
 		return;
 
-	var player = root.get_node(NodePath('Player'));
+	var player = root.get_node_or_null(NodePath('Player'));
 	if not player:
 		return;
 
 	player.global_position = global_position;
+	player.global_rotation.y = convert_direction(entity.angles).y - PI / 2;
 
 	if not editor:
 		InfoPlayerStart.spawned = true;

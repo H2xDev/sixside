@@ -10,6 +10,8 @@ extends ValveIONode;
 @export var volume = 1.0;
 
 const FLAG_RANDOM_SOUND_PITCH = 2;
+const FLAG_NON_SOLID = 4;
+const FLAG_LINEAR = 8;
 
 var openValue = 0.0;
 var isOpen = false;
@@ -27,7 +29,8 @@ func _entity_ready():
 	startPos = position;
 
 	isOpen = entity.spawnpos == 1;
-	ProcessOpen(entity.spawnpos, false);
+	lip3 = moveDirection * entity.lip * config.import.scale;
+	call_deferred('ProcessOpen', entity.spawnpos, false);
 
 	if "noise1" in entity:
 		openSound = load("res://Assets/Sounds/" + entity.noise1);
@@ -84,13 +87,13 @@ func Toggle(_param = null):
 		Open(_param);
 
 func ProcessOpen(percent, backwards):
-	var p = Anime.EaseInOutQuad(percent);
+	var p = Anime.EaseInOutQuad(percent) if not have_flag(FLAG_LINEAR) else percent;
 
 	if backwards == isOpen:
 		return;
 
 	openValue = p;
-	
+
 	position = startPos + moveDistance * p - lip3 * p;
 
 func _apply_entity(e, c):
@@ -98,13 +101,18 @@ func _apply_entity(e, c):
 
 	var mesh = get_mesh();
 	$MeshInstance3D.set_mesh(mesh);
-	$MeshInstance3D/StaticBody3D/CollisionShape3D.shape = get_entity_shape();
+
+	if not have_flag(FLAG_NON_SOLID):
+		$MeshInstance3D/StaticBody3D/CollisionShape3D.shape = get_entity_shape();
+	else:
+		$MeshInstance3D/StaticBody3D.queue_free();
 
 	moveDirection = get_movement_vector(e.movedir);
 	moveDistance = mesh.get_aabb().size * moveDirection;
 
-	speed = e.speed * config.importScale;
-	lip3 = moveDirection * e.lip * config.importScale;
+	speed = e.speed * config.import.scale;
+	lip3 = moveDirection * e.lip * config.import.scale;
+	
 	volume = e.volume / 10.0;
-	e.radius = e.radius * config.importScale if "radius" in e else 100.0;
+	e.radius = e.radius * config.import.scale if "radius" in e else 100.0;
 

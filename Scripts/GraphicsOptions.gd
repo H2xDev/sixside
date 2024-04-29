@@ -133,9 +133,9 @@ func ValidateConfig():
 		config[key] = config[key] if key in config else DEFAULTS[key];
 
 func ApplyConfig():
-	var scale = int(config["Resolution Scale"]) + 1;
+	var scl = int(config["Resolution Scale"]) + 1;
 	var viewport = get_viewport();
-	viewport.scaling_3d_scale = 1.0 / scale;
+	viewport.scaling_3d_scale = 1.0 / scl;
 
 	# V sync
 	var vsync = [DisplayServer.VSYNC_DISABLED, DisplayServer.VSYNC_ADAPTIVE, DisplayServer.VSYNC_ENABLED][config["VSync"]]
